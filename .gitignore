@@ -1,0 +1,14 @@
+__pycache__/busbar_classifier.cpython-37.pyc
+__pycache__/busbar_classifier.cpython-311.pyc
+__pycache__/fileloader.cpython-37.pyc
+__pycache__/fileloader.cpython-311.pyc
+__pycache__/RANSAC.cpython-37.pyc
+__pycache__/RANSAC.cpython-311.pyc
+.idea/.name
+resources/mainWindow_ori.ui
+resources/mainWindow.ui
+*.xml
+*.txt
+*.csv
+*.pyc
+*.iml
