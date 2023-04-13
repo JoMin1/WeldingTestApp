@@ -21,7 +21,6 @@ from busbar_classifier import Detector
 from defectCounter import DefectCounter
 
 import threading
-from numba import jit
 
 class WeldingTestApp(threading.Thread):
 
