@@ -411,7 +411,7 @@ class WeldingTestApp(threading.Thread):
         self.__mainWindow.listWidget.clear()
 
     def show_fileDialog(self):
-        fileName = QtWidgets.QFileDialog.getOpenFileName(self.__mainWindow, 'Open file', 'D:/sample/busbar', "Image files (*.jpg *.png *.csv)")
+        fileName = QtWidgets.QFileDialog.getOpenFileName(self.__mainWindow, 'Open file', 'D:/sample/busbar', "Image files (*.jpg *.png *.csv *.tif)")
         print(fileName)
         if fileName[0] == "":
             return None
@@ -431,12 +431,13 @@ class WeldingTestApp(threading.Thread):
             return
 
         self.srcImage_ori = srcImage.copy()
+        print(srcImage.shape)
 
         if srcImage.dtype == "float64":
             srcImage = np.where(srcImage < -10, 0, srcImage)
             #TODO : normalization 제거
-            # srcImage = (((srcImage - np.min(srcImage)) / (np.max(srcImage) - np.min(srcImage))) * 255).astype(np.uint8)
-            srcImage = (((srcImage + 10) / (3 + 10)) * 255).astype(np.uint8)
+            srcImage = (((srcImage - np.min(srcImage)) / (np.max(srcImage) - np.min(srcImage))) * 255).astype(np.uint8)
+            # srcImage = (((srcImage + 10) / (10 - (-3))) * 255).astype(np.uint8)
         return srcImage
 
     def __get_roi(self, points_roi):
@@ -451,6 +452,7 @@ class WeldingTestApp(threading.Thread):
             index_roi += 1
 
             step = round((points_roi[3] - points_roi[1]) / divide_val) # FIXME : 당연히 1 인 식..?
+            print(self.srcImage[points_roi[1] + (index_roi * step)])
             _ = self.detector.run(self.srcImage[points_roi[1] + (index_roi * step), points_roi[0]:points_roi[2]]) # 단면하나를 보냄(1차 배열)
             if self.detector.dist_b_max == -1:
                 continue
@@ -473,8 +475,7 @@ class WeldingTestApp(threading.Thread):
             index_roi -= 1
 
             step = round((points_roi[3] - points_roi[1]) / divide_val)
-            _ = self.detector.run(self.srcImage[points_roi[1] + (index_roi * step),
-                                                     points_roi[0]:points_roi[2]])
+            _ = self.detector.run(self.srcImage[points_roi[1] + (index_roi * step), points_roi[0]:points_roi[2]])
             if self.detector.dist_b_max == -1:
                 continue
             if self.detector.dist_b_max >= self.start_dist_thr:
@@ -513,7 +514,8 @@ class WeldingTestApp(threading.Thread):
         heightData_ = heightDataTemp + abs(min_heightData)
         heightData_ = np.round(abs(heightData_), 2) * 300 + 100
 
-        zeroImage = np.ones((1100, len(heightData_), 3), np.uint8) * 255
+        # zeroImage = np.ones((1100, len(heightData_), 3), np.uint8) * 255
+        zeroImage = np.ones((3200, len(heightData_), 3), np.uint8) * 255
         for index in range(len(heightData_)):
             height = int(heightData_[index])
             zeroImage[height - 4:height, index] = (255 * roi_idx[index], 100, 100 * roi_idx[index])
